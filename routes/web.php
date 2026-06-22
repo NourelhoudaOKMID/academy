@@ -13,11 +13,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
-
-// Route::middleware('')->get('/e', function () {
-//     return redirect('/dashboard');
-// });
-
 require __DIR__."/admin/management.php";
 require __DIR__."/admin/classes.php";
 require __DIR__."/auth.php";

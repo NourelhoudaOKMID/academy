@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import Cards from './components/cards';
 import Filter from './components/filter';
+import AppLayout from '@/layouts/app-layout';
+import Banner from '@/components/ui/banner';
+import { Head, router, useForm } from '@inertiajs/react';
 
-const Classes = ({ items, coaches }) => {
+const Classes = ({ items, coaches, suAdmin }) => {
     const [field, setField] = useState('all');
     const [data, setData] = useState(items);
     
@@ -10,7 +13,7 @@ const Classes = ({ items, coaches }) => {
     const specialty = ['all', 'coding', 'media'];
     const [promo, setPromo] = useState(0);
     const [coach, setCoach] = useState("all");
-    console.log(data);
+    console.log(suAdmin);
     console.log(coaches);
     console.log(field);
     var filtered = items
@@ -37,12 +40,30 @@ const Classes = ({ items, coaches }) => {
 
     return (
         <>
+         <AppLayout
+            breadcrumbs={[
+                {
+                    title: 'Courses',
+                    // href: Classes(),
+                },
+            ]}
+        >
+            <Head title="Courses" />
+
+
+                <Banner
+                    // illustration={illustration}
+                    size={400}
+                    title="Classes"
+                    description="A Place To Show All CLasses "
+                />
             <Filter
                 onPromoChange={setPromo}
                 onFieldChange={setField}
                 onCoachChange={setCoach}
                 coaches={["all", ...coaches]}
                 promos={promos}
+                suAdmin={suAdmin}
                 Specialty={specialty}
             ></Filter>
             <div className="m-5 grid grid-cols-1 justify-items-center gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
@@ -58,6 +79,8 @@ const Classes = ({ items, coaches }) => {
                     );
                 })}
             </div>
+                    </AppLayout>
+
         </>
     );
 };
