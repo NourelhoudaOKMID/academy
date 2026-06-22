@@ -1,5 +1,6 @@
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
+import { TransText } from '@/components/TransText';
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -10,11 +11,6 @@ import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
-
-
-
-
-
 
 export function UserMenuContent({ user }) {
   const cleanup = useMobileNavigation();
@@ -40,22 +36,25 @@ export function UserMenuContent({ user }) {
             prefetch
             onClick={cleanup}>
             
-                        <Settings className="mr-2" />
-                        Settings
+                        <User className="mr-2" />
+                        <TransText en="Profile" fr="Profile" ar="Profile" />
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem
+                asChild
+                className="text-error focus:bg-error/10 focus:text-error"
+            >
                 <Link
-          className="block w-full cursor-pointer"
+          className="flex w-full cursor-pointer items-center text-error"
           href={logout()}
           as="button"
           onClick={handleLogout}
           data-test="logout-button">
           
-                    <LogOut className="mr-2" />
-                    Log out
+                    <LogOut className="mr-2 text-error" />
+                    <TransText en="Log out" fr="Log out" ar="Log out" />
                 </Link>
             </DropdownMenuItem>
         </>);

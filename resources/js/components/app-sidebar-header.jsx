@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { NavbarUser } from '@/components/navbar-user';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 
@@ -13,6 +14,7 @@ export function AppSidebarHeader({
                 <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
+            <NavbarUser />
         </header>);
 
 }

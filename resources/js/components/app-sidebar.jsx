@@ -1,8 +1,6 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, LayoutGrid, Settings } from 'lucide-react';
-import AppLogo from '@/components/app-logo';
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, ChevronRight, Settings, ShieldCheck } from 'lucide-react';
+import { TransText } from '@/components/TransText';
 import {
     Sidebar,
     SidebarContent,
@@ -12,54 +10,148 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { cn, toUrl } from '@/lib/utils';
 import { index as coursesIndex } from '@/routes/courses';
+import { edit as profileEdit } from '@/routes/profile';
+import { edit as securityEdit } from '@/routes/security';
 
-const mainNavItems = [
+const logoSrc = '/assets/images/logolionsgeek.png';
+
+const navigationSections = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        key: 'platform',
+        label: <TransText en="Platform" fr="Platform" ar="Platform" />,
+        items: [
+            {
+                title: <TransText en="Courses" fr="Courses" ar="Courses" />,
+                href: coursesIndex(),
+                icon: BookOpen,
+            },
+        ],
     },
     {
-        title: 'Courses',
-        href: coursesIndex(),
-        icon: BookOpen,
-    },
-    {
-        title: 'Classes',
-        href: '/class',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Settings',
-        href: '/settings',
-        icon: Settings,
+        key: 'workspace',
+        label: <TransText en="Workspace" fr="Workspace" ar="Workspace" />,
+        items: [
+            {
+                title: <TransText en="Settings" fr="Settings" ar="Settings" />,
+                href: profileEdit(),
+                icon: Settings,
+            },
+            {
+                title: <TransText en="Security" fr="Security" ar="Security" />,
+                href: securityEdit(),
+                icon: ShieldCheck,
+            },
+        ],
     },
 ];
 
 export function AppSidebar() {
+    const page = usePage();
+
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar
+            collapsible="icon"
+            className="h-svh! min-h-svh border-r border-[#252525] bg-[#171717] [--sidebar:#171717] [--sidebar-accent:#4b3b05] [--sidebar-accent-foreground:#ffc801] [--sidebar-border:#252525] [--sidebar-foreground:#f5f5f5]"
+        >
+            <SidebarHeader className="mx-2 border-b border-sidebar-border px-4 py-5 group-data-[collapsible=icon]:mx-1 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:py-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
+                        <SidebarMenuButton
+                            size="lg"
+                            asChild
+                            className="h-auto gap-3 rounded-xl px-0 py-1 hover:bg-transparent data-[active=true]:bg-transparent"
+                        >
+                            <Link href={coursesIndex()} prefetch>
+                                <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-alpha/70 bg-alpha/5 shadow-[0_0_18px_rgba(255,200,1,0.18)] group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-full">
+                                    <img
+                                        src={logoSrc}
+                                        alt="LionsGeek"
+                                        className="size-8 rounded-full object-cover group-data-[collapsible=icon]:size-6"
+                                    />
+                                </span>
+                                <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+                                    <span className="truncate text-[0.92rem] font-semibold text-sidebar-foreground">
+                                        <TransText
+                                            en="LionsGeek Academy"
+                                            fr="LionsGeek Academy"
+                                            ar="LionsGeek Academy"
+                                        />
+                                    </span>
+                                    <span className="truncate text-xs font-medium uppercase tracking-wide text-sidebar-foreground/60">
+                                        <TransText
+                                            en="Coach workspace"
+                                            fr="Coach workspace"
+                                            ar="Coach workspace"
+                                        />
+                                    </span>
+                                </div>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
+            <SidebarContent className="gap-6 px-4 py-5 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-4">
+                {navigationSections.map((section) => (
+                    <SidebarMenu
+                        key={section.key}
+                        className="gap-1.5 group-data-[collapsible=icon]:items-center"
+                    >
+                        <p className="px-3 pb-2 text-[0.68rem] font-medium uppercase tracking-[0.28em] text-sidebar-foreground/62 group-data-[collapsible=icon]:hidden">
+                            {section.label}
+                        </p>
+
+                        {section.items.map((item) => (
+                            <SidebarNavItem
+                                key={item.href.url ?? item.href}
+                                item={item}
+                                currentUrl={page.url}
+                            />
+                        ))}
+                    </SidebarMenu>
+                ))}
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
+            <SidebarFooter className="mx-2 mt-auto border-t border-sidebar-border p-0 pb-5 group-data-[collapsible=icon]:mx-1" />
         </Sidebar>
+    );
+}
+
+function SidebarNavItem({ item, currentUrl }) {
+    const href = toUrl(item.href);
+    const isActive = currentUrl.startsWith(href);
+
+    return (
+        <SidebarMenuItem>
+            <SidebarMenuButton
+                asChild
+                tooltip={{ children: item.title }}
+                isActive={isActive}
+                className={cn(
+                    'group/nav h-10 rounded-lg px-3 text-[0.92rem] font-medium text-sidebar-foreground transition-all duration-200',
+                    'group-data-[collapsible=icon]:size-9! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:p-0!',
+                    'hover:bg-[#2f2a16] hover:text-alpha hover:shadow-[inset_0_0_0_1px_rgba(255,200,1,0.18)]',
+                    isActive &&
+                        'bg-[#4b3b05] text-alpha hover:bg-[#604b07] hover:text-alpha hover:shadow-[inset_0_0_0_1px_rgba(255,200,1,0.35)]',
+                )}
+            >
+                <Link href={item.href} prefetch>
+                    <item.icon
+                        className={cn(
+                            'size-4 transition-transform duration-200 ease-out group-hover/nav:-translate-y-0.5 group-hover/nav:scale-110 group-hover/nav:rotate-[-6deg] group-focus-visible/nav:-translate-y-0.5 group-focus-visible/nav:scale-110',
+                            isActive ? 'text-alpha' : 'text-sidebar-foreground',
+                        )}
+                    />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                        {item.title}
+                    </span>
+                    {isActive && (
+                        <ChevronRight className="ml-auto size-4 text-alpha group-data-[collapsible=icon]:hidden" />
+                    )}
+                </Link>
+            </SidebarMenuButton>
+        </SidebarMenuItem>
     );
 }
