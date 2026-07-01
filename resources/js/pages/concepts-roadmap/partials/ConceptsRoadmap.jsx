@@ -1,10 +1,15 @@
+import { motion } from 'framer-motion';
 import { CANVAS_WIDTH, getCanvasHeight, getNodePosition } from './conceptHelpers';
 import AddConceptButton from './AddConceptButton';
 import ConceptNode from './ConceptNode';
 import ConceptPath from './ConceptPath';
 import EmptyConcepts from './EmptyConcepts';
-import RoadmapBackground from './RoadmapBackground';
 
+/*
+ * No RoadmapBackground here — it now lives in the parent scrollable section
+ * (index.jsx) so it fills the full viewport width, not just the 560px canvas.
+ * The canvas itself is transparent: nodes float on the workspace background.
+ */
 export default function ConceptsRoadmap({
     concepts,
     selectedConcept,
@@ -20,13 +25,21 @@ export default function ConceptsRoadmap({
     const canvasHeight = getCanvasHeight(concepts.length);
 
     return (
-        <div
-            className="relative mx-auto overflow-hidden rounded-lg border border-border bg-card"
-            style={{ width: CANVAS_WIDTH, height: canvasHeight }}
+        /*
+         * The canvas is a transparent, fixed-width positioning context for nodes.
+         * No card styling (no bg-card, no border, no rounded, no shadow) — those
+         * would reintroduce the "panel inside the workspace" feeling.
+         * overflow-hidden is kept to clip SVG paths and node overflow correctly.
+         * py-8 gives vertical breathing room between the toolbar and the first node.
+         */
+        <motion.div
+            className="relative mx-auto overflow-hidden"
+            style={{ width: CANVAS_WIDTH, minHeight: Math.max(canvasHeight, 720) }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
         >
-            <RoadmapBackground />
-
-            {/* SVG layer — paths connecting consecutive nodes */}
+            {/* SVG layer — animated connection paths */}
             <svg
                 className="absolute inset-0 h-full w-full text-muted-foreground/40"
                 aria-hidden="true"
@@ -38,16 +51,19 @@ export default function ConceptsRoadmap({
                             key={concept.id}
                             from={getNodePosition(index - 1)}
                             to={getNodePosition(index)}
+                            index={index}
                         />
                     );
                 })}
+                {/* Path from last concept to the Add button */}
                 <ConceptPath
                     from={getNodePosition(concepts.length - 1)}
                     to={getNodePosition(concepts.length)}
+                    index={concepts.length}
                 />
             </svg>
 
-            {/* Concept nodes */}
+            {/* Concept nodes — staggered via index prop */}
             {concepts.map((concept, index) => (
                 <ConceptNode
                     key={concept.id}
@@ -57,14 +73,16 @@ export default function ConceptsRoadmap({
                     onSelect={() => onSelectConcept(concept)}
                     onEdit={() => onEditConcept(concept)}
                     onDelete={() => onDeleteConcept(concept)}
+                    index={index}
                 />
             ))}
 
-            {/* Add button positioned after the last concept */}
+            {/* Add button — appears after all nodes */}
             <AddConceptButton
                 position={getNodePosition(concepts.length)}
                 onAdd={onAddConcept}
+                index={concepts.length}
             />
-        </div>
+        </motion.div>
     );
 }

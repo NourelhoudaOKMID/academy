@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { router } from '@inertiajs/react';
 import { ArrowLeft, Layers3, Plus } from 'lucide-react';
 import { TransText } from '@/components/TransText';
@@ -6,9 +7,21 @@ import { index as coursesIndex } from '@/routes/courses';
 
 export default function RoadmapTopBar({ course, conceptCount, onAdd }) {
     return (
-        <div className="relative overflow-hidden rounded-lg border border-border bg-card shadow-xs">
-            <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--color-alpha),transparent_72%)]" />
-            <div className="flex items-center justify-between gap-4 p-4">
+        /*
+         * Flat workspace toolbar — border-b only, no rounded corners, no card shadow.
+         * backdrop-blur gives it the "floating panel" depth without elevation.
+         * Matches how Linear, Figma, and Raycast style their toolbars.
+         */
+        <motion.div
+            className="relative border-b border-border/70 bg-card/90 backdrop-blur-sm"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        >
+            {/* Accent line — top yellow stripe kept from original */}
+            <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,var(--color-alpha),transparent_72%)]" />
+
+            <div className="flex items-center justify-between gap-4 px-4 py-3 md:px-6">
                 <div className="flex items-center gap-3">
                     <Button
                         type="button"
@@ -19,12 +32,11 @@ export default function RoadmapTopBar({ course, conceptCount, onAdd }) {
                     >
                         <ArrowLeft className="size-4" />
                     </Button>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl" aria-hidden="true">
-                            {course?.emoji || '📚'}
-                        </span>
+                    <div className="flex items-center">
                         <h1 className="text-lg font-semibold text-foreground">
-                            {course?.title}
+                            {course?.title 
+                            ? course.title.charAt(0).toUpperCase() + course.title.slice(1)
+                            : ''}
                         </h1>
                     </div>
                 </div>
@@ -49,6 +61,6 @@ export default function RoadmapTopBar({ course, conceptCount, onAdd }) {
                     </Button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

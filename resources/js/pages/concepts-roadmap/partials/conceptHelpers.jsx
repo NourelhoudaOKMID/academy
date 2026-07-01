@@ -14,7 +14,7 @@ export const CANVAS_WIDTH = 560;
 export const NODE_RADIUS = 33;
 export const VERTICAL_STEP = 200;
 export const TOP_PADDING = 110;
-export const BOTTOM_PADDING = 140;
+export const BOTTOM_PADDING = 300;
 export const CURVE_AMPLITUDE = 114;
 export const CURVE_FREQUENCY = Math.PI * 0.65;
 

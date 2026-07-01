@@ -29,8 +29,6 @@ export default function ConceptModal({
     isEditing = false,
 }) {
 
-    console.log(course);
-
     const update = (field) => (e) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));
 

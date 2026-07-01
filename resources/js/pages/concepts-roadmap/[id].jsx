@@ -1,12 +1,13 @@
 import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import CourseConceptRoadmap from './index';
+
 
 export default function CourseConceptRoadmapPage({ course }) {
     return (
-        <AppLayout>
+        <AppSidebarLayout>
             <Head title="Concepts Roadmap" />
             <CourseConceptRoadmap course={course} />
-        </AppLayout>
+        </AppSidebarLayout>
     );
 }
