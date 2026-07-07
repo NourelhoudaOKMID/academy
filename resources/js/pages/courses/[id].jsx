@@ -44,6 +44,10 @@ export default function CourseDetails({ course }) {
         });
     };
 
+    const openConceptBuilder = (concept) => {
+        router.visit(`/concept/${concept.id}/edit`);
+    };
+
     const handleSubmitConcept = (event) => {
         event.preventDefault();
         if (!selectedConcept) {
@@ -123,10 +127,11 @@ export default function CourseDetails({ course }) {
                     concept={selectedConcept}
                     conceptIndex={concepts.findIndex((c) => c.id === selectedConcept?.id)}
                     onClose={() => setSelectedConcept(null)}
-                    onEdit={() => selectedConcept && handleEditConcept(selectedConcept)}
+                    onEdit={() => selectedConcept && openConceptBuilder(selectedConcept)}
                     onDelete={() => selectedConcept && handleDeleteConcept(selectedConcept)}
                 />
             </div>
         </AppSidebarLayout>
     );
 }
+
