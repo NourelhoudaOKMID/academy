@@ -4,7 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { AppContextProvider } from '../js/context/appContext';
+import { AppContextProvider } from '@/context/AppContext';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
