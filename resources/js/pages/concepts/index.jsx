@@ -3,9 +3,9 @@ import { Head, router, usePage } from '@inertiajs/react';
 
 import AppLayout from '@/layouts/app-layout';
 import { index as coursesIndex } from '@/routes/courses';
-import ConceptTopbar from './partials/ConceptTopbar';
-import CourseStructureSidebar from './partials/CourseStructureSidebar';
-import TopicWorkspace from './partials/TopicWorkspace';
+import ConceptTopbar from '../courses/partials/concept_builder/ConceptTopbar';
+import CourseStructureSidebar from '../courses/partials/concept_builder/CourseStructureSidebar';
+import TopicWorkspace from '../courses/partials/concept_builder/TopicWorkspace';
 
 function hasResourceFile(resource) {
     return resource.file && typeof resource.file === 'object';
