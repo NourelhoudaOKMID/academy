@@ -7,7 +7,9 @@ const features = [
     { label: 'Real-time Interaction', icon: MessageSquare },
 ];
 
-export default function LiveStreamBanner({ href = '/classroom/sessions' }) {
+export default function LiveStreamBanner({ classId, href }) {
+    const sessionHref = href ?? (classId ? `/classroom/sessions/${classId}` : '#');
+
     return (
         <section className="mx-3 mt-4 mb-8 overflow-hidden rounded-2xl border border-[#F5E8C6] bg-[#FFF9EA] px-6 py-5 shadow-sm transition-all duration-300 hover:border-[#E8D49A] hover:shadow-md hover:shadow-amber-200/40 md:mx-5 md:px-10 md:py-6 lg:mx-6 lg:px-14 dark:border-[#2A2617] dark:bg-[#15130D] dark:shadow-none dark:hover:border-[#4A3B12] dark:hover:shadow-lg dark:hover:shadow-yellow-950/20">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -45,7 +47,7 @@ export default function LiveStreamBanner({ href = '/classroom/sessions' }) {
                 <div className="shrink-0">
                 {/* CTA button */}
                 <Link
-                    href={href}
+                    href={sessionHref}
                     aria-label="Start Live Session"
                     className="inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-r from-[#FFD026] to-[#FFC400] px-6 py-3 text-sm font-bold text-[#102033] shadow-md shadow-yellow-500/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-yellow-500/30"
                 >

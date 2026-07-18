@@ -21,7 +21,7 @@ export default function ClasseDetails({ courses = [] , data }) {
             {/* //^^ chabab  import your component here tawa7d maycodi hna  khdmo dakchi  fl partials then  importiwh   */}
 
             {/* live stram banner  */}
-  {!selectedStudent && <LiveStreamBanner />}
+  {!selectedStudent && <LiveStreamBanner classId={data.id} />}
 <Tabs
     students={data.students}
     coach={data.coach}

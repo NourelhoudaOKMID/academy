@@ -45,6 +45,11 @@ class ClassController extends Controller
         return $user->wakatime()->value("wakatime_key");
     }
 
+    private function userHasAnyRole(User $user, array $allowedRoles): bool
+    {
+        return $user->Roles()->whereIn('role', $allowedRoles)->exists();
+    }
+
     public function index()
     {
         $classes = Classes::orderBy("promo")->orderBy("class")->get()->all();
@@ -142,6 +147,77 @@ class ClassController extends Controller
         }
 
         return Inertia::render("classes/[id]", ["data" => $data]);
+    }
+
+    public function classroomSession($id)
+    {
+        $class = Classes::where("id", $id)->get()->first();
+        if (!$class) {
+            return abort(404);
+        }
+
+        $students = $this->getStudents($class);
+        $coach = $this->getLastCoach($class);
+        $data = [];
+        $data["id"] = $class->id;
+        $data["class"] = $class->class;
+        $data["promo"] = $class->promo;
+        $data["type"] = $class->type;
+        if ($coach) {
+            $data["coach"] = $coach->name;
+        }
+        if ($students) {
+            foreach ($students as $key => $student) {
+                $data["students"][$key]["id"] = $student->id;
+                $data["students"][$key]["name"] = $student->name;
+                $data["students"][$key]["avatar"] = $student->avatar;
+                $data["students"][$key]["field"] = $student->field;
+                $data["students"][$key]["status"] = $student->status;
+                $data["students"][$key]["promo"] = $class->promo;
+                $data["students"][$key]["type"] = $class->type;
+                $data["students"][$key]["class"] = $class->class;
+                $data["students"][$key]["avatar"] = $student->avatar ?
+                    env("CENTRAL_HOST_URL") . "/storage/img/profile/" . $student->avatar :
+                    null;
+                $data["students"][$key]["email"] = $student->email;
+                $data["students"][$key]["gh_url"] = $this->getGithub($student);
+                $data["students"][$key]["wakaKey"] = $this->getWakatimeKey($student);
+            }
+        }
+
+        $user = Auth::user();
+        $classTitle = trim(implode(' ', array_filter([
+            $class->type,
+            $class->class,
+            $class->promo ? 'Promo '.$class->promo : null,
+        ])));
+        $isHost = $coach && (int) $coach->id === (int) $user->id;
+        $canRecord = $isHost || $this->userHasAnyRole($user, ['admin', 'coach', 'super_admin']);
+        $canShareScreen = $isHost || $this->userHasAnyRole($user, ['admin', 'coach', 'super_admin']);
+        $roomName = 'academy-class-'.$class->id;
+
+        return Inertia::render('classroom/sessions/[id]', [
+            'data' => $data,
+            'classroom' => [
+                'status' => 'pending',
+                'message' => 'Jitsi video ready',
+            ],
+            'jitsiAccess' => [
+                'provider' => config('services.jitsi.provider'),
+                'domain' => config('services.jitsi.domain'),
+                'script_url' => config('services.jitsi.script_url'),
+                'room_name' => $roomName,
+                'display_name' => $user->name,
+                'is_host' => $isHost,
+                'can_share_screen' => $canShareScreen,
+                'can_record' => $canRecord,
+                'subject' => $classTitle ?: 'Classroom session',
+                'user_id' => $user->id,
+                'auth_enabled' => false,
+                'jwt' => null,
+                'expires_at' => null,
+            ],
+        ]);
     }
 
     /**
